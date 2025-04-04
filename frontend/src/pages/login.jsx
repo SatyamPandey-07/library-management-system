@@ -1,106 +1,126 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/slices/authSlice";
+import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error, token, user } = useSelector((state) => state.auth);
 
-function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("");
-  const [submit, setSubmit] = useState(false);
-
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmit(true);
-    setError("");
-
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
-    try {
-      
-      const response = await axios.post(
-        "http://localhost:4300/api/v1/users/login",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-
-      if (response.data.token) {
-        if (response.data.role === "admin") {
-        // Redirect to admin key page if user is an admin
-        navigate("/admin-login");
-      } else {
-        navigate("/dashboard");
+    dispatch(loginUser({ email, password })).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        navigate(user?.role === "admin" ? "/admin-login" : "/dashboard");
       }
-      }
-    } catch (error) {
-      console.log(error);
-      
-      setError(error.response?.data?.msg || "Login failed, try again!");
-    }
-
-    setSubmit(false);
+    });
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-r from-[#e7dac7] to-[#c2a27a] mt-10 w-full h-full">
-      <div className="relative w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-[#c2a27a]">
-        <h2 className="text-center text-3xl font-serif font-bold text-[#4a3628] mb-4">
-          Log Into your Account
-        </h2>
-        <p className="text-center text-gray-700 mb-6">
-          Join the library and explore a world of knowledge.
-        </p>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#0d1117",
+        color: "#c9d1d9",
+      }}
+    >
+      <Paper
+        elevation={8}
+        sx={{
+          p: 4,
+          width: "100%",
+          maxWidth: 400,
+          backgroundColor: "#161b22",
+          border: "1px solid #30363d",
+          borderRadius: "12px",
+          textAlign: "center",
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#58a6ff", mb: 2 }}>
+          Welcome Back
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#8b949e", mb: 3 }}>
+          Log in to continue managing the library.
+        </Typography>
 
-        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+        {error && (
+          <Typography variant="body2" sx={{ color: "red", mb: 2 }}>
+            {error}
+          </Typography>
+        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your username"
-            />
-          </div>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            variant="outlined"
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            sx={{
+              mb: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#30363d" },
+                "&:hover fieldset": { borderColor: "#58a6ff" },
+                "&.Mui-focused fieldset": { borderColor: "#58a6ff" },
+              },
+              input: { color: "#c9d1d9" },
+              label: { color: "#8b949e" },
+            }}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your surname"
-            />
-          </div>
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            sx={{
+              mb: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#30363d" },
+                "&:hover fieldset": { borderColor: "#58a6ff" },
+                "&.Mui-focused fieldset": { borderColor: "#58a6ff" },
+              },
+              input: { color: "#c9d1d9" },
+              label: { color: "#8b949e" },
+            }}
+          />
 
-         
-
-       
-
-
-          <button
+          <Button
             type="submit"
-            className={`w-full py-2 px-4 rounded-lg transition duration-200 ${
-              submit
-                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                : "bg-[#6b4f37] text-white hover:bg-[#4a3628]"
-            }`}
-            disabled={submit}
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 2,
+              backgroundColor: "#238636",
+              fontWeight: "bold",
+              "&:hover": { backgroundColor: "#2ea043" },
+            }}
+            disabled={loading}
           >
-            {submit ? "Loggigng In..." : "Log Up"}
-          </button>
+            {loading ? "Logging In..." : "Login"}
+          </Button>
         </form>
-      </div>
-    </div>
+
+        <Typography variant="body2" sx={{ mt: 3, color: "#8b949e" }}>
+          New user?{" "}
+          <Link to="/signup" style={{ color: "#58a6ff", textDecoration: "none" }}>
+            Sign Up
+          </Link>
+        </Typography>
+      </Paper>
+    </Box>
   );
-}
+};
 
 export default Login;

@@ -1,0 +1,84 @@
+/* Global Styles */
+body, html {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Main Container to Prevent Gaps */
+.main-container {
+    display: flex;
+    height: 100vh;  /* Full viewport height */
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;  /* Adjust width as needed */
+    height: 100vh; /* Make it full height */
+    flex-shrink: 0;
+    background-color: #161b22;
+    border-right: 1px solid #30363d;
+    padding: 1rem;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 1rem;
+}
+
+/* Card Design */
+.card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0px 0px 8px rgba(88, 166, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 0px 12px rgba(88, 166, 255, 0.4);
+}
+
+/* Buttons */
+button {
+    background-color: #238636;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #2ea043;
+    transform: scale(1.05);
+}
+
+/* Footer - Sticks to Bottom */
+.footer {
+    background-color: #161b22;
+    color: #8b949e;
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid #30363d;
+    margin-top: auto;  /* Pushes footer to the bottom */
+}

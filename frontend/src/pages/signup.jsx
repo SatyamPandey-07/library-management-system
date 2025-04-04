@@ -1,19 +1,36 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Fade,
+  Divider,
+} from "@mui/material";
 
-function Signup() {
+const Signup = () => {
   const navigate = useNavigate();
-  const [fullname, setFullname] = useState("");
-  const [surname, setSurname] = useState("");
-  const [feesReceiptNo, setFeesReceiptNo] = useState("");
-  const [email, setEmail] = useState("");
-  const [idCardImage, setIdCardImage] = useState(null);
+  const [formData, setFormData] = useState({
+    fullname: "",
+    surname: "",
+    feesReceiptNo: "",
+    email: "",
+    idCardImage: null,
+  });
+
   const [error, setError] = useState("");
   const [submit, setSubmit] = useState(false);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleFileChange = (e) => {
-    setIdCardImage(e.target.files[0]);
+    setFormData({ ...formData, idCardImage: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
@@ -21,17 +38,13 @@ function Signup() {
     setSubmit(true);
     setError("");
 
-    const formData = new FormData();
-    formData.append("fullname", fullname);
-    formData.append("surname", surname);
-    formData.append("feesReceiptNo", feesReceiptNo);
-    formData.append("email", email);
-    formData.append("idCardImage", idCardImage);
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, value]) => data.append(key, value));
 
     try {
       const response = await axios.post(
         "http://localhost:4300/api/v1/users/register",
-        formData,
+        data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
@@ -46,98 +59,175 @@ function Signup() {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-r from-[#e7dac7] to-[#c2a27a] mt-10 w-full h-full">
-      <div className="relative w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-[#c2a27a]">
-        <h2 className="text-center text-3xl font-serif font-bold text-[#4a3628] mb-4">
-          Create an Account
-        </h2>
-        <p className="text-center text-gray-700 mb-6">
-          Join the library and explore a world of knowledge.
-        </p>
-
-        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Full Name</label>
-            <input
-              type="text"
-              value={fullname}
-              onChange={(e) => setFullname(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your full name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Surname</label>
-            <input
-              type="text"
-              value={surname}
-              onChange={(e) => setSurname(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your surname"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Fees Receipt No</label>
-            <input
-              type="text"
-              value={feesReceiptNo}
-              onChange={(e) => setFeesReceiptNo(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your receipt number"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-              placeholder="Enter your email"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-800">Upload ID Card</label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-[#c2a27a]"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className={`w-full py-2 px-4 rounded-lg transition duration-200 ${
-              submit
-                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                : "bg-[#6b4f37] text-white hover:bg-[#4a3628]"
-            }`}
-            disabled={submit}
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#0d1117",
+        color: "#c9d1d9",
+        px: 2,
+      }}
+    >
+      <Fade in>
+        <Paper
+          elevation={8}
+          sx={{
+            p: 4,
+            width: "100%",
+            maxWidth: 450,
+            backgroundColor: "#161b22",
+            border: "1px solid #30363d",
+            borderRadius: "16px",
+            textAlign: "center",
+            boxShadow: "0px 0px 20px rgba(88, 166, 255, 0.15)",
+          }}
+        >
+          {/* 🔥 Fixed Heading Visibility */}
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              color: "#58a6ff",
+              textShadow: "0px 0px 10px rgba(88, 166, 255, 0.8)",
+              mb: 3,
+              paddingTop: "16px", // 👈 Ensures visibility
+            }}
           >
-            {submit ? "Signing Up..." : "Sign Up"}
-          </button>
-        </form>
+            Create an Account
+          </Typography>
 
-        <p className="mt-4 text-center text-sm text-gray-700">
-          Already have an account?{" "}
-          <Link to="/login" className="text-[#6b4f37] hover:underline">
-            Log In
-          </Link>
-        </p>
-      </div>
-    </div>
+          <Typography variant="body1" sx={{ color: "#8b949e", mb: 3 }}>
+            Join the library and explore a world of knowledge.
+          </Typography>
+
+          {error && (
+            <Typography variant="body2" sx={{ color: "#f44336", mb: 2 }}>
+              {error}
+            </Typography>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Full Name"
+              name="fullname"
+              variant="outlined"
+              fullWidth
+              value={formData.fullname}
+              onChange={handleChange}
+              required
+              sx={inputStyles}
+            />
+
+            <TextField
+              label="Surname"
+              name="surname"
+              variant="outlined"
+              fullWidth
+              value={formData.surname}
+              onChange={handleChange}
+              required
+              sx={inputStyles}
+            />
+
+            <TextField
+              label="Fees Receipt No"
+              name="feesReceiptNo"
+              variant="outlined"
+              fullWidth
+              value={formData.feesReceiptNo}
+              onChange={handleChange}
+              required
+              sx={inputStyles}
+            />
+
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              value={formData.email}
+              onChange={handleChange}
+              required
+              sx={inputStyles}
+            />
+
+            {/* Upload */}
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              sx={{
+                mt: 2,
+                color: "#58a6ff",
+                borderColor: "#30363d",
+                "&:hover": {
+                  backgroundColor: "#21262d",
+                  borderColor: "#58a6ff",
+                  boxShadow: "0 0 8px #58a6ff",
+                },
+              }}
+            >
+              Upload ID Card
+              <input type="file" hidden onChange={handleFileChange} />
+            </Button>
+
+            {/* Preview File Name */}
+            {formData.idCardImage && (
+              <Typography
+                variant="caption"
+                sx={{ mt: 1, display: "block", color: "#8b949e", textAlign: "left" }}
+              >
+                Selected: {formData.idCardImage.name}
+              </Typography>
+            )}
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 3,
+                backgroundColor: "#238636",
+                fontWeight: "bold",
+                transition: "0.3s ease",
+                "&:hover": {
+                  backgroundColor: "#2ea043",
+                  boxShadow: "0px 0px 12px #2ea043",
+                },
+              }}
+              disabled={submit}
+            >
+              {submit ? "Signing Up..." : "Sign Up"}
+            </Button>
+          </form>
+
+          <Divider sx={{ my: 3, borderColor: "#30363d" }} />
+
+          <Typography variant="body2" sx={{ color: "#8b949e" }}>
+            Already have an account?{" "}
+            <Link to="/login" style={{ color: "#58a6ff", textDecoration: "none" }}>
+              Log In
+            </Link>
+          </Typography>
+        </Paper>
+      </Fade>
+    </Box>
   );
-}
+};
+
+// 🔥 Input Styling with Better Contrast
+const inputStyles = {
+  mb: 2,
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": { borderColor: "#30363d" },
+    "&:hover fieldset": { borderColor: "#58a6ff" },
+    "&.Mui-focused fieldset": { borderColor: "#58a6ff", boxShadow: "0 0 8px #58a6ff55" },
+  },
+  input: { color: "#c9d1d9" },
+  label: { color: "#8b949e" },
+};
 
 export default Signup;
